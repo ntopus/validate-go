@@ -13,8 +13,10 @@ A struct validator which group in a map and custom errors messages from a simpli
 
 ```go
     // name is the validation name where will be used on struct tags
-    // function is the validation function that will receive the field value to be validate
-    // message is the custom message when validation failed, use :field in the message and will be replaced by failed field name
+    // function is the validation function that will receive the field
+    // value to be validate
+    // message is the custom message when validation failed, use :field
+    // in the message and will be replaced by failed field name
    validator.RegisterValidation(name string, function ValidationFunc, message string)
 ```
 
@@ -63,7 +65,8 @@ A struct validator which group in a map and custom errors messages from a simpli
 
 ```go
     // data is struct that will be under validation
-    // errors is a map[string]string with the failed field name as key and error message as value
+    // errors is a map[string]string with the failed field 
+    // name as key and error message as value
     // ok is a boolean warning the validation status
     errors, ok := validator.Validate(data interface{})
 ```
