@@ -14,61 +14,50 @@ type Student struct {
 
 func TestValidateWithACustomFunction(t *testing.T) {
 	RegisterTestingT(t)
-	v := New()
-	v.RegisterValidation("underAge", underAge, "the :field is too low")
-	msg, ok := v.Validate(studentWithEmail("name", "pass", 5))
+	RegisterValidation("underAge", underAge, "the :field is too low")
+	msg, ok := Validate(studentWithEmail("name", "pass", 5))
 	expectValidationFalse(msg, ok, "age", "the age is too low")
 }
 
 func TestValidateWithADefaultFunction(t *testing.T) {
 	RegisterTestingT(t)
-	v := New()
-	v.RegisterValidation("underAge", underAge, "the :field is too low")
-	msg, ok := v.Validate(studentWithEmail("", "pass", 25))
+	msg, ok := Validate(studentWithEmail("", "pass", 25))
 	expectValidationFalse(msg, ok, "name", "name is required or invalid")
 }
 
 func TestValidationSuccess(t *testing.T) {
 	RegisterTestingT(t)
-	v := New()
-	v.RegisterValidation("underAge", underAge, "the :field is too low")
-	msg, ok := v.Validate(studentWithEmail("name", "pass", 25))
+	msg, ok := Validate(studentWithEmail("name", "pass", 25))
 	Expect(ok).To(BeTrue())
 	Expect(msg).To(BeNil())
 }
 
 func TestValidateCustomMessage(t *testing.T) {
 	RegisterTestingT(t)
-	v := New()
-	v.RegisterValidation("underAge", underAge)
-	v.RegisterValidationMessage("underAge", "the :field is too low")
-	v.RegisterValidationMessage("required", "the :field is required")
-	msg, ok := v.Validate(studentWithEmail("name", "pass", 5))
-	expectValidationFalse(msg, ok, "age", "the age is too low")
-	msg, ok = v.Validate(studentWithEmail("", "pass", 25))
+	RegisterValidationMessage("underAge", "the :field is low")
+	RegisterValidationMessage("required", "the :field is required")
+	msg, ok := Validate(studentWithEmail("name", "pass", 5))
+	expectValidationFalse(msg, ok, "age", "the age is low")
+	msg, ok = Validate(studentWithEmail("", "pass", 25))
 	expectValidationFalse(msg, ok, "name", "the name is required")
 }
 
 func TestValidateTwoCustomMessage(t *testing.T) {
 	RegisterTestingT(t)
-	v := New()
-	v.RegisterValidation("underAge", underAge)
-	v.RegisterValidationMessage("underAge", "the :field is too low but it will not be this one")
-	v.RegisterValidationMessage("underAge", "the :field is too low")
-	msg, ok := v.Validate(studentWithEmail("name", "pass", 5))
+	RegisterValidationMessage("underAge", "the :field is too low but it will not be this one")
+	RegisterValidationMessage("underAge", "the :field is too low")
+	msg, ok := Validate(studentWithEmail("name", "pass", 5))
 	expectValidationFalse(msg, ok, "age", "the age is too low")
 }
 
 func TestValidateMultipleFields(t *testing.T) {
 	RegisterTestingT(t)
-	v := New()
-	v.RegisterValidation("underAge", underAge, "the :field is too low")
-	msg, ok := v.Validate(Student{})
+	msg, ok := Validate(Student{})
 	Expect(ok).To(BeFalse())
 	Expect(len(msg)).To(BeEquivalentTo(4))
-	Expect(msg["name"]).To(BeEquivalentTo("name is required or invalid"))
-	Expect(msg["email"]).To(BeEquivalentTo("email is required or invalid"))
-	Expect(msg["password"]).To(BeEquivalentTo("password is required or invalid"))
+	Expect(msg["name"]).To(BeEquivalentTo("the name is required"))
+	Expect(msg["email"]).To(BeEquivalentTo("the email is required"))
+	Expect(msg["password"]).To(BeEquivalentTo("the password is required"))
 	Expect(msg["age"]).To(BeEquivalentTo("the age is too low"))
 }
 
