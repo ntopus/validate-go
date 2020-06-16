@@ -7,43 +7,43 @@ import (
 	"strings"
 )
 
+var val = newValidate()
+
 type validate struct {
 	validate *validator.Validate
 	rules    map[string]string
 }
 
-func New() IValidate {
+func newValidate() *validate {
 	return &validate{
 		validate: validator.New(),
 		rules:    make(map[string]string),
 	}
 }
 
-func (v *validate) RegisterValidation(name string, function ValidationFunc, message ...string) IValidate {
+func RegisterValidation(name string, function ValidationFunc, message ...string) {
 	if message != nil {
-		v.rules[name] = message[0]
+		val.rules[name] = message[0]
 	}
 	if function != nil {
-		_ = v.validate.RegisterValidation(name, func(fl validator.FieldLevel) bool {
+		_ = val.validate.RegisterValidation(name, func(fl validator.FieldLevel) bool {
 			return function(&Field{field: fl})
 		})
 	}
-	return v
 }
 
-func (v *validate) RegisterValidationMessage(name string, message string) IValidate {
-	v.rules[name] = message
-	return v
+func RegisterValidationMessage(name string, message string) {
+	val.rules[name] = message
 }
 
-func (v *validate) Validate(data interface{}) (map[string]string, bool) {
-	err := v.validate.Struct(data)
+func Validate(data interface{}) (map[string]string, bool) {
+	err := val.validate.Struct(data)
 	if err != nil {
 		responseFail := newResponse()
 		for _, e := range err.(validator.ValidationErrors) {
 			field := strcase.ToLowerCamel(e.Field())
-			if _, ok := v.rules[e.Tag()]; ok {
-				msg := strings.Replace(v.rules[e.Tag()], ":field", field, -1)
+			if _, ok := val.rules[e.Tag()]; ok {
+				msg := strings.Replace(val.rules[e.Tag()], ":field", field, -1)
 				responseFail.set(field, msg)
 				continue
 			}
