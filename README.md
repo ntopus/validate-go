@@ -4,12 +4,15 @@ A struct validator which group in a map and custom errors messages from a simpli
 
 ## Usage
 
-##### Creating a validator
+#### Registering custom validation func
+
+##### Example
 
 ```go
-    validator := validate.New()
+    validate.RegisterValidation("underAge", underAge, "the :field is too low")
 ```
-##### Registering custom validation func
+
+##### Registering
 
 ```go
     // name is the validation name where will be used on struct tags
@@ -17,29 +20,24 @@ A struct validator which group in a map and custom errors messages from a simpli
     // value to be validate
     // message is the custom message when validation failed, use :field
     // in the message and will be replaced by failed field name
-   validator.RegisterValidation(name string, function ValidationFunc, message string)
+   validate.RegisterValidation(name string, function ValidationFunc, message string)
 ```
 
-##### ValidationFunc
+#### ValidationFunc
 
 ```go
     type ValidationFunc func(field IField) bool
 ```
 
-##### IField
+#### IField
 
 ```go
    type IField interface {
    	Field() reflect.Value
    }
 ```
-###### Example
 
-```go
-   	validator.RegisterValidation("underAge", underAge, "the :field is too low")
-```
-
-###### Validation name usage example
+##### Validation name usage example
 
 ```go
    type Student struct {
@@ -50,23 +48,26 @@ A struct validator which group in a map and custom errors messages from a simpli
    }
 ```
 
-##### Registering custom message to a validation
+#### Registering custom message to a validation
+
+##### Example
 
 ```go
-    validator.RegisterValidationMessage(name string, message string)
+    validate.RegisterValidationMessage("underAge", "the :field is too low")
 ```
-###### Example
+
+##### Registering
 
 ```go
-	validator.RegisterValidationMessage("underAge", "the :field is too low")
+    validate.RegisterValidationMessage(name string, message string)
 ```
 
-##### Validation
+#### Validation
 
 ```go
     // data is struct that will be under validation
     // errors is a map[string]string with the failed field 
     // name as key and error message as value
     // ok is a boolean warning the validation status
-    errors, ok := validator.Validate(data interface{})
+    errors, ok := validate.Validate(data interface{})
 ```
