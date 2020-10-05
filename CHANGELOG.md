@@ -6,3 +6,7 @@ of a validator anymore
 #### v0.2.1
 
 * Bug fix
+
+#### v0.2.2
+
+* Upgrade validator version
