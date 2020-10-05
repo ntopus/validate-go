@@ -2,8 +2,8 @@ package validate
 
 import (
 	"fmt"
+	"github.com/go-playground/validator/v10"
 	"github.com/iancoleman/strcase"
-	"gopkg.in/go-playground/validator.v9"
 	"strings"
 )
 
